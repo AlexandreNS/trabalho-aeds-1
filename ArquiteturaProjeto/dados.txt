@@ -1,0 +1,9 @@
+CLIENTE = código, nome, endereço, telefone, data de nascimento
+
+FUNCIONARIO = código, nome, telefone, função, salario, tipo (temporário ou fixo)
+
+FORNECEDOR = código, nome, telefone, produto fornecido
+
+FESTA = código festa, quantidade de convidados, data, dia da semana, horário (inicio e fim), tema, código cliente
+
+CONTRATO = número contrato, valor total, desconto, valor final, forma de pagamento, status, código festa
