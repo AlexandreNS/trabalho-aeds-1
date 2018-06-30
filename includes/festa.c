@@ -17,14 +17,39 @@ typedef struct ClienteTag{
     Data aniversario;
 
 } Cliente;
+typedef struct FornecedorTag {
+    int codigo;
+    char nome[50];
+    char telefone[20];
+    char produtoFornecido[50];
+} Fornecedor;
+typedef struct FestaTag {
+    int codigoFesta;
+    int convidados;
+    Data data;
+    int diaSemana;
+    int horarioInicio;
+    int horarioFim;
+    char tema[50];
+    int codigoCliente;
+} Festa;
 typedef struct FuncionarioTag{
     int codigo;
     char nome[50];
     char telefone[20];
-    char funcao[30];
+    char funcao[50];
     float salario;
     int tipo;
-}
+} Funcionario;
+typedef struct ContratoTag {
+    int numeroContrato;
+    float valorTotal;
+    float desconto;
+    float valorFinal;
+    int pagamento;
+    int status;
+    int codigoFesta;
+} Contrato;
 
 bool validarData(Data *data, char dataInformada[], int dataTipo){
     formataString(dataInformada);
@@ -115,7 +140,7 @@ void goMenuPrincipal(){
     system("clear");
     switch (opcaoMarcada) {
         case 1:
-            printf("goMenuPesquisa()\n");
+            goMenuPesquisas();
             exit(EXIT_FAILURE);
             break;
         case 2:
@@ -167,15 +192,15 @@ void goMenuCadastros(){
             goCadastroCliente();
             break;
         case 2:
-            printf("Cadastro()\n");
+            printf("goCadastroFesta();\n");
             exit(EXIT_FAILURE);
             break;
         case 3:
-            printf("goMenuRelatorios()\n");
+            goCadastroFornecedor();
             exit(EXIT_FAILURE);
             break;
         case 4:
-            printf("goStatusContrato()\n");
+            goCadastroFuncionario();
             exit(EXIT_FAILURE);
             break;
         case 5:
@@ -186,6 +211,56 @@ void goMenuCadastros(){
             exit(EXIT_FAILURE);
     }
 }
+void goMenuPesquisas(){
+    int params;
+    int opcaoMarcada = -1;
+    char opcaoMarcada_txt[20];
+
+    renderizarTexto(CAPA);
+    renderizarTexto(MENU_PESQUISAS);
+
+    fgets(opcaoMarcada_txt, 19, stdin);
+    setbuf(stdin, NULL);
+    params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+
+    while ((opcaoMarcada < 1 || opcaoMarcada > 5) || params != 1) {
+            system("clear");
+            renderizarTexto(CAPA);
+            renderizarTexto(INVALIDO);
+            renderizarTexto(MENU_PESQUISAS);
+
+            fgets(opcaoMarcada_txt, 19, stdin);
+            setbuf(stdin, NULL);
+            params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+    }
+
+    system("clear");
+    switch (opcaoMarcada) {
+        case 1:
+            printf("goMenuPesquisa()\n");
+            exit(EXIT_FAILURE);
+            break;
+        case 2:
+            goMenuCadastros();
+            break;
+        case 3:
+            printf("goMenuRelatorios()\n");
+            exit(EXIT_FAILURE);
+            break;
+        case 4:
+            printf("goStatusContrato()\n");
+            exit(EXIT_FAILURE);
+            break;
+        case 5:
+            printf("Saindo...\n");
+            exit(EXIT_SUCCESS);
+            break;
+        case 6:
+            printf("CRUD AINDA NÃO ESTÁ PRONTO\n");
+            exit(EXIT_FAILURE);
+    }
+}
+// Views de Cadastros
 void goCadastroCliente(){
     Cliente c;
     char dataNascimento[20];
@@ -267,6 +342,8 @@ void goCadastroCliente(){
 }
 void goCadastroFuncionario(){
     Funcionario f;
+    char salario_txt[20];
+    char tipo_txt[20];
     // Durante o Cadastro
     system("clear");
     renderizarTexto(CAPA);
@@ -276,32 +353,23 @@ void goCadastroFuncionario(){
     setbuf(stdin, NULL);
 
     printf("\tDigite o telefone: ");
-    fgets(f.endereco, 199, stdin);
+    fgets(f.telefone, 19, stdin);
     setbuf(stdin, NULL);
 
     printf("\tDigite o salario: ");
-    fgets(f.telefone, 19, stdin);
+    fgets(salario_txt, 19, stdin);
     setbuf(stdin, NULL);
+    sscanf(salario_txt, "%.2f", &f.salario); // PONTO IMPORTANTE HAHAHAHHAHAHAHAH
 
     printf("\tDigite a função exercida: ");
-    fgets(f.telefone, 19, stdin);
+    fgets(f.funcao, 19, stdin);
     setbuf(stdin, NULL);
 
-    printf("\tInforme o tipo\n\t1-Temporário\n\t2-Fixo\n : ");
-    fgets(dataNascimento, 19, stdin);
+    printf("\tInforme o tipo:\n\t\t1-Temporário\n\t\t2-Fixo\n\t>>>");
+    fgets(tipo_txt, 19, stdin);
     setbuf(stdin, NULL);
+    sscanf(tipo_txt, "%d", &f.tipo); // PONTO IMPORTANTE HAHAHAHHAHAHAHAH
 
-    formataString(c.nome);
-    while (validarData(&c.aniversario, dataNascimento, ANIVERSARIO) == false) {
-        system("clear");
-        renderizarTexto(CAPA);
-        printf("\n  ### Processo de Cadastro do Funcionario %.10s ###\n", f.nome);
-        printf("  ### Data de nascimento invalida ###\n");
-
-        printf("\tDigite novamente: ");
-        fgets(dataNascimento, 19, stdin);
-        setbuf(stdin, NULL);
-    }
     system("clear");
     // Fazendo Cadastro com Funcao Externa
 
@@ -347,6 +415,69 @@ void goCadastroFuncionario(){
 
     }
 }
+void goCadastroFornecedor(){
+    Fornecedor f;
+    // Durante o Cadastro
+    system("clear");
+    renderizarTexto(CAPA);
+    printf("\n  ### Cadastro de Fornecedor ###\n\n");
+    printf("\tDigite o nome: ");
+    fgets(f.nome, 49, stdin);
+    setbuf(stdin, NULL);
+
+    printf("\tDigite o telefone: ");
+    fgets(f.telefone, 19, stdin);
+    setbuf(stdin, NULL);
+
+    printf("\tDigite o produto fornecido: ");
+    fgets(f.produtoFornecido, 49, stdin);
+    setbuf(stdin, NULL);
+
+    system("clear");
+    // Fazendo Cadastro com Funcao Externa
+
+    setFornecedor(&f);
+
+    // Depois de Efetuar o Cadastro
+    renderizarTexto(CAPA);
+
+    printf("\n  ### Fornecedor %.10s cadastrado com sucesso ####\n", f.nome);
+    printf("  ### Deseja realizar outro cadastro ? ###\n\n");
+
+    renderizarTexto(MENU_CADASTROS_INTERNO);
+    int params;
+    int opcaoMarcada = -1;
+    char opcaoMarcada_txt[20];
+
+    fgets(opcaoMarcada_txt, 19, stdin);
+    setbuf(stdin, NULL);
+    params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+
+    while ((opcaoMarcada < 1 || opcaoMarcada > 3) || params != 1) {
+        system("clear");
+        renderizarTexto(CAPA);
+        renderizarTexto(INVALIDO);
+        printf("  ### Deseja realizar outro cadastro ? ###\n\n");
+        renderizarTexto(MENU_CADASTROS_INTERNO);
+
+        fgets(opcaoMarcada_txt, 19, stdin);
+        setbuf(stdin, NULL);
+        params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+    }
+
+    system("clear");
+    switch (opcaoMarcada) {
+        case 1:
+            goCadastroFornecedor();
+            break;
+        case 2:
+            goMenuCadastros();
+            break;
+        case 3:
+            goMenuPrincipal();
+
+    }
+}
 
 void setCliente(Cliente *c){
     Cliente ultimo;
@@ -368,6 +499,64 @@ void setCliente(Cliente *c){
         // Escreve no Arquivo
         c->codigo = ultimo.codigo+1;
         fwrite(c, sizeof(Cliente), 1, bd);
+
+        if (ferror(bd)){
+            fclose(bd);
+            printf("Erro >>> Não foi possivel escrever no arquivo\n");
+            exit(EXIT_FAILURE);
+        }
+
+        fclose(bd);
+    }
+}
+void setFuncionario(Funcionario *f){
+    Funcionario ultimo;
+    ultimo.codigo = 0;
+
+    formataString(f->nome);
+    formataString(f->telefone);
+    formataString(f->funcao);
+
+    FILE *bd = fopen(BD_FUNCIONARIO, "a+");
+    if (bd == NULL){
+        printf("Erro >>> Verifique se baixou o programa corretamente\n");
+        exit(EXIT_FAILURE);
+    }else{
+        //Pega o ultimo ID Cadastrado
+        fseek(bd, (-1)*sizeof(Funcionario), SEEK_END);
+        fread(&ultimo, sizeof(Funcionario), 1, bd);
+
+        // Escreve no Arquivo
+        f->codigo = ultimo.codigo+1;
+
+        if (ferror(bd)){
+            fclose(bd);
+            printf("Erro >>> Não foi possivel escrever no arquivo\n");
+            exit(EXIT_FAILURE);
+        }
+
+        fclose(bd);
+    }
+}
+void setFornecedor(Fornecedor *f){
+    Fornecedor ultimo;
+    ultimo.codigo = 0;
+
+    formataString(f->nome);
+    formataString(f->telefone);
+    formataString(f->produtoFornecido);
+
+    FILE *bd = fopen(BD_FORNECEDOR, "a+");
+    if (bd == NULL){
+        printf("Erro >>> Verifique se baixou o programa corretamente\n");
+        exit(EXIT_FAILURE);
+    }else{
+        //Pega o ultimo ID Cadastrado
+        fseek(bd, (-1)*sizeof(Fornecedor), SEEK_END);
+        fread(&ultimo, sizeof(Fornecedor), 1, bd);
+
+        // Escreve no Arquivo
+        f->codigo = ultimo.codigo+1;
 
         if (ferror(bd)){
             fclose(bd);

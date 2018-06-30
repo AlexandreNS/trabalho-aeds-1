@@ -1,6 +1,6 @@
   -------------------------------CADASTRAR----------------------------------
 
-	1-Cliente
+    1-Cliente
 	2-Festa
 	3-Fornecedor
 	4-Funcionario

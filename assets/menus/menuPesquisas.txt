@@ -1,0 +1,9 @@
+  ---------------------------------PESQUISAR---------------------------------
+
+      1-Cliente
+      2-Festa
+      3-Fornecedor
+      4-Funcionario
+      5-Voltar para o Inicio
+
+Escolha uma opção:
