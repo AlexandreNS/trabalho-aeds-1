@@ -1,5 +1,5 @@
-    1-Sim
-    2-Voltar para Pesquisas
-    3-Voltar para o Inicio
+        1-Sim
+        2-Voltar para Pesquisas
+        3-Voltar para o Inicio
 
 Escolha uma opção:
