@@ -15,6 +15,7 @@
 #define MENU_CADASTROS "assets/menus/menuCadastros.txt"
 #define MENU_PESQUISAS "assets/menus/menuPesquisas.txt"
 #define MENU_CADASTROS_INTERNO "assets/menus/menuCadastrosInterno.txt"
+#define MENU_PESQUISAS_INTERNO "assets/menus/menuPesquisasInterno.txt"
 //DEFINES DOS BDS
 #define BD_CLIENTE "db/cliente.dat"
 #define BD_FUNCIONARIO "db/funcionario.dat"
@@ -47,16 +48,18 @@ void renderizarTexto(char texto[]);                 //carrega TXT's
 void goMenuPrincipal();
 void goMenuCadastros();
 void goMenuPesquisas();
-
+// Cadastros
 void goCadastroCliente();
 void goCadastroFuncionario();
 void goCadastroFesta();
 void goCadastroFornecedor();
-
+// Pesquisas
+void goPesquisaCliente();
 // Funcoes BDS
 void setCliente(Cliente *c);
 void setFuncionario(Funcionario *f);
 void setFesta(Festa *f);
 void setFornecedor(Fornecedor *f);
 
+int getClientes(char busca[]);
 #endif

@@ -237,27 +237,24 @@ void goMenuPesquisas(){
     system("clear");
     switch (opcaoMarcada) {
         case 1:
-            printf("goMenuPesquisa()\n");
+            goPesquisaCliente();
             exit(EXIT_FAILURE);
             break;
         case 2:
-            goMenuCadastros();
+            printf("goPesquisaCliente()\n");
             break;
         case 3:
-            printf("goMenuRelatorios()\n");
+            printf("goPesquisaCliente()\n");
             exit(EXIT_FAILURE);
             break;
         case 4:
-            printf("goStatusContrato()\n");
+            printf("goPesquisaCliente()\n");
             exit(EXIT_FAILURE);
             break;
         case 5:
-            printf("Saindo...\n");
+            goMenuPrincipal();
             exit(EXIT_SUCCESS);
             break;
-        case 6:
-            printf("CRUD AINDA NÃO ESTÁ PRONTO\n");
-            exit(EXIT_FAILURE);
     }
 }
 // Views de Cadastros
@@ -478,6 +475,65 @@ void goCadastroFornecedor(){
 
     }
 }
+// Views de Pesquisas
+void goPesquisaCliente(){
+    char busca[50];
+    int *codigos;
+
+    renderizarTexto(CAPA);
+    printf("\n  ### Pesquisa de Clientes ###\n\n");
+    printf("\tDigite um nome para a busca: ");
+
+    fgets(busca, 49, stdin);
+    setbuf(stdin, NULL);
+
+    if (getClientes(busca) == -1){
+        int params;
+        int opcaoMarcada = -1;
+        char opcaoMarcada_txt[20];
+
+        renderizarTexto(CAPA);
+        printf("\n  ### Pesquisa de Clientes ###\n");
+        printf("  ### O \"%s\" não foi encontrado ou a OPCAO foi INVALIDA ###\n\n", busca);
+        printf("  ### Deseja realizar outra Pesquisa ? ###\n");
+        renderizarTexto(MENU_PESQUISAS_INTERNO);
+
+        fgets(opcaoMarcada_txt, 19, stdin);
+        setbuf(stdin, NULL);
+        params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+
+        while ((opcaoMarcada < 1 || opcaoMarcada > 3) || params != 1) {
+            renderizarTexto(CAPA);
+            renderizarTexto(INVALIDO);
+            printf("\n  ### Pesquisa de Clientes ###\n");
+            printf("  ### O \"%s\" não foi encontrado ###\n\n", busca);
+            printf("  ### Deseja realizar outra Pesquisa ? ###\n");
+            renderizarTexto(MENU_PESQUISAS_INTERNO);
+
+            fgets(opcaoMarcada_txt, 19, stdin);
+            setbuf(stdin, NULL);
+            params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+        }
+
+        system("clear");
+        switch (opcaoMarcada) {
+            case 1:
+                goPesquisaCliente();
+                break;
+            case 2:
+                goMenuPesquisas();
+                break;
+            case 3:
+                goMenuPrincipal();
+                break;
+        }
+
+    }else{
+        //Informações do Cliente vao ser carregadas
+        
+    }
+
+}
 
 void setCliente(Cliente *c){
     Cliente ultimo;
@@ -566,4 +622,79 @@ void setFornecedor(Fornecedor *f){
 
         fclose(bd);
     }
+}
+
+int getClientes(char busca[]){ //Retorna o codigo desejado
+    formataString(busca);
+
+    Cliente c;
+    int *codigos;
+    int numRegistros = 0;
+    // Parte para selecionar
+    int params;
+    int opcaoMarcada = 1;
+    char opcaoMarcada_txt[20];
+
+    FILE *bd;
+    bd = fopen(BD_CLIENTE, "r");
+
+    system("clear");
+    if (bd == NULL){
+        printf("Erro >>> Verifique se baixou o programa corretamente\n");
+        exit(EXIT_FAILURE);
+    }else{
+        renderizarTexto(CAPA);
+
+        fread(&c, sizeof(Cliente), 1, bd); //Primeira Leitura dos DADOS
+
+        // Esta parte exibe a lista dos Dados Encontrados
+
+        if( (strstr(c.nome, busca) != NULL) && !feof(bd) ){
+            printf("\n  ### Clientes encontrados com a busca - %s ###\n\n", busca);
+            numRegistros++;
+
+            printf("\t%d-%s - codigo: %d\n", numRegistros, c.nome, c.codigo);
+
+            codigos = (int*)malloc(1*sizeof(int));
+            codigos[numRegistros-1] = c.codigo;
+
+            fread(&c, sizeof(Cliente), 1, bd);
+
+            while ( !feof(bd) ) {
+                if (strstr(c.nome, busca) != NULL) {
+                    numRegistros++;
+
+                    printf("\t%d-%s - codigo: %d\n", numRegistros, c.nome, c.codigo);
+
+                    codigos = (int*)realloc(codigos, numRegistros*sizeof(int));
+                    codigos[numRegistros-1] = c.codigo;
+
+                    fread(&c, sizeof(Cliente), 1, bd);
+                }else{
+                    fread(&c, sizeof(Cliente), 1, bd);
+                }
+            }
+            printf("\t%d-Realizar outra busca\n", numRegistros+1);
+
+            fclose(bd);
+
+            printf("\nEscolha uma das opções acima:\n");
+            fgets(opcaoMarcada_txt, 19, stdin);
+            setbuf(stdin, NULL);
+            params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+
+            system("clear");
+            if ((opcaoMarcada < 1 || opcaoMarcada > numRegistros) || params != 1) {
+                free(codigos);
+                return -1; // Realizar outra Pesquisa
+            }else{
+                return codigos[opcaoMarcada-1];
+            }
+        }else{
+            return -1; // Nenhum registro encontrado
+        }
+
+    }
+
+    return -1;
 }

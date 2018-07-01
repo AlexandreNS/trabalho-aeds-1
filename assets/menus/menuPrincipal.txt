@@ -1,10 +1,10 @@
   ----------------------------------HOME-------------------------------------
 
-	1-Pesquisar no Sistema
-	2-Cadastrar
-	3-Relatorios
-	4-Editar Status de um Contrato
-	5-Sair
-	6-Avançado (*testes)
+        1-Pesquisar no Sistema
+        2-Cadastrar
+        3-Relatorios
+        4-Editar Status de um Contrato
+        5-Sair
+        6-Avançado (*testes)
 
 Escolha uma opção:
