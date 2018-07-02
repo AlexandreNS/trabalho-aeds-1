@@ -1,2 +1,3 @@
-# trabalho-aeds-1
-Trabalho para a matéria de AEDS-1 UEMG
+<img src="http://www.uemg.br/images/Logo_uemg.jpg" align="right" />
+
+# Trabalho de AEDS-1
