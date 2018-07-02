@@ -1,5 +1,5 @@
 #include "includes/festa.c"
-// /*
+/*
 int params;
 int opcaoMarcada = -1;
 char opcaoMarcada_txt[20];
@@ -43,6 +43,42 @@ switch (opcaoMarcada) {
 
 int main() {
     system("clear");
+    // FILE *bd;
+    // Festa f;
+    // bd = fopen(BD_FESTA, "a");
+    // if(bd == NULL){
+    //     printf("Erro >>> Verifique se baixou o programa corretamente\n");
+    //     exit(EXIT_FAILURE);
+    // }else{
+    //     f.horarioInicio = 18;
+    //     f.data.dia = 7;
+    //     f.data.mes = 7;
+    //     f.data.ano = 2018;
+    //     fwrite(&f, sizeof(Festa), 1, bd);
+    //     fclose(bd);
+    // }
+    // Data d;
+    // d.dia = 7;
+    // d.mes = 7;
+    // d.ano = 2018;
+    // int h;
+    // selectHorario("char tema[]",d , &h);
+    // printf("%d\n", h);
+
+    FILE *bd;
+    Funcionario f;
+    bd = fopen(BD_FESTA, "a");
+    if(bd == NULL){
+        printf("Erro >>> Verifique se baixou o programa corretamente\n");
+        exit(EXIT_FAILURE);
+    }else{
+        f.horarioInicio = 18;
+        f.data.dia = 7;
+        f.data.mes = 7;
+        f.data.ano = 2018;
+        fwrite(&f, sizeof(Festa), 1, bd);
+        fclose(bd);
+    }
 
     // Cliente c;
     // strcpy(c.nome, "Alexandre");

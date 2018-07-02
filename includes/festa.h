@@ -1,6 +1,7 @@
 //VARIAVEIS DE CONTROLE
 #define FESTA 0
 #define ANIVERSARIO 1
+#define BUSCA 2
 
 #define TEMPORARIO 0
 #define FIXO 1
@@ -42,7 +43,8 @@ typedef struct ContratoTag Contrato;
 
 void formataString(char texto[]);                   // Tira possiveis quebras de linha na String
 bool validarData(Data *data, char dataInformada[], int dataTipo);  // Verifica se a data existe
-bool validarTelefone(char telefone[]);  // Verifica se a data existe
+int diaSemana(Data data);
+bool selectHorario(char tema[], Data data, int *horarioInicio);
 void renderizarTexto(char texto[]);                 //carrega TXT's
 // Renders
 void goMenuPrincipal();
@@ -55,6 +57,7 @@ void goCadastroFesta();
 void goCadastroFornecedor();
 // Pesquisas
 void goPesquisaCliente();
+void goPesquisaFuncionario();
 // Funcoes BDS
 void setCliente(Cliente *c);
 void setFuncionario(Funcionario *f);
@@ -62,4 +65,5 @@ void setFesta(Festa *f);
 void setFornecedor(Fornecedor *f);
 
 int getClientes(char busca[]);
+int getFuncionarios(char busca[]);
 #endif
