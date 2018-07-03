@@ -43,6 +43,55 @@ switch (opcaoMarcada) {
 
 int main() {
     system("clear");
+    Contrato c;
+    FILE *bd;
+    bd = fopen(BD_CONTRATO, "r");
+
+    fread(&c, sizeof(Contrato), 1, bd);
+    while (!feof(bd)) {
+        printf("%f\n", c.valorFinal);
+        printf("%d\n", c.codigoFesta);
+        printf("%d\n", c.numeroContrato);
+        printf("\n\n");
+        fread(&c, sizeof(Contrato), 1, bd);
+    }
+
+    fclose(bd);
+
+    // Festa f;
+    // f.codigoFesta = getCodigoFesta();
+    //
+    // FILE *bd = fopen(BD_FESTA, "a+");
+    // fwrite(&f, sizeof(Festa), 1, bd);
+    // fclose(bd);
+
+    // Cliente resultado = getCliente(1);
+    // printf("\n  ### Dados do Cliente encontrado ###\n\n");
+    // printf("\t> Codigo: %d\n", resultado.codigo);
+    // printf("\t> Nome: %s\n", resultado.nome);
+    // printf("\t> Endereco: %s\n", resultado.endereco);
+    // printf("\t> Telefone: %s\n", resultado.telefone);
+    // printf("\t> Data de Nascimento: %02d/%02d/%d\n\n", resultado.aniversario.dia, resultado.aniversario.mes, resultado.aniversario.ano);
+    //
+    //
+
+    // printf("%d\n", diaSemanaContrato(0));
+
+    // for (int i = 0; i < 7; i++) {
+    //     printf("%f\n", calcularValorTotal(30, i));
+    // }
+    // printf("\n\n");
+    // for (int i = 0; i < 7; i++) {
+    //     printf("%f\n", calcularValorTotal(50, i));
+    // }
+    // printf("\n\n");
+    // for (int i = 0; i < 7; i++) {
+    //     printf("%f\n", calcularValorTotal(80, i));
+    // }
+    // printf("\n\n");
+    // for (int i = 0; i < 7; i++) {
+    //     printf("%f\n", calcularValorTotal(100, i));
+    // }
     // FILE *bd;
     // Festa f;
     // bd = fopen(BD_FESTA, "a");
@@ -65,20 +114,20 @@ int main() {
     // selectHorario("char tema[]",d , &h);
     // printf("%d\n", h);
 
-    FILE *bd;
-    Funcionario f;
-    bd = fopen(BD_FESTA, "a");
-    if(bd == NULL){
-        printf("Erro >>> Verifique se baixou o programa corretamente\n");
-        exit(EXIT_FAILURE);
-    }else{
-        f.horarioInicio = 18;
-        f.data.dia = 7;
-        f.data.mes = 7;
-        f.data.ano = 2018;
-        fwrite(&f, sizeof(Festa), 1, bd);
-        fclose(bd);
-    }
+    // FILE *bd;
+    // Funcionario f;
+    // bd = fopen(BD_FESTA, "a");
+    // if(bd == NULL){
+    //     printf("Erro >>> Verifique se baixou o programa corretamente\n");
+    //     exit(EXIT_FAILURE);
+    // }else{
+    //     f.horarioInicio = 18;
+    //     f.data.dia = 7;
+    //     f.data.mes = 7;
+    //     f.data.ano = 2018;
+    //     fwrite(&f, sizeof(Festa), 1, bd);
+    //     fclose(bd);
+    // }
 
     // Cliente c;
     // strcpy(c.nome, "Alexandre");

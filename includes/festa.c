@@ -44,7 +44,7 @@ typedef struct FuncionarioTag{
 typedef struct ContratoTag {
     int numeroContrato;
     float valorTotal;
-    float desconto;
+    int desconto;
     float valorFinal;
     int pagamento;
     int status;
@@ -109,6 +109,43 @@ int getDiaSemana(Data data){ // Retorna int [0-6]
     dataRetorno = localtime(&tempo);
 
     return dataRetorno->tm_wday;
+}
+int diaSemanaContrato(int dia){
+    int semana[7] = {6, 0, 1, 2, 3, 4, 5};
+    for(int iTime = 0; iTime < 7; iTime++){
+        if(iTime == dia){
+            return semana[iTime];
+        }
+    }
+    return -1;
+} // Retorna para ser usado no Contrato 0 1 2 3  4 5 6
+int getDesconto(int pagamento){
+    if ( pagamento == 1) return 10;
+    if ( pagamento == 2) return 5;
+    if ( pagamento == 3) return 2;
+    if ( pagamento == 4) return 0;
+
+    return -1;
+}
+float calcularValorTotal(int convidados, int dia){
+    float valoresTotais[8] =  {1899.00, 2099.00, 2199.00, 2299.00, 3199.00, 3499.00, 3799.00, 3999.00};
+    int tabelaValorTotal[8][3] = {  30, 0, 3,
+                                    30, 4, 6,
+                                    50, 0, 3,
+                                    50, 4, 6,
+                                    80, 0, 3,
+                                    80, 4, 6,
+                                    100, 0, 3,
+                                    100, 4, 6
+    };
+    for (int i = 0; i < 8; i++) {
+        if ( convidados == tabelaValorTotal[i][0]
+        &&  (dia >= tabelaValorTotal[i][1]  &&  dia <= tabelaValorTotal[i][2]) ) {
+            return valoresTotais[i];
+        }
+    }
+
+    return -1;
 }
 bool selectHorario(char tema[], Data data, int *horarioInicio){
     system("clear");
@@ -455,7 +492,7 @@ void goCadastroCliente(){
     while (validarData(&c.aniversario, dataNascimento, ANIVERSARIO) == false) {
         system("clear");
         renderizarTexto(CAPA);
-        printf("\n  ### Processo de Cadastro do Cliente %.10s ###\n", c.nome);
+        printf("\n  ### Processo de Cadastro do Cliente %s ###\n", c.nome);
         printf("  ### Data de nascimento invalida ###\n");
 
         printf("\tDigite novamente: ");
@@ -470,7 +507,7 @@ void goCadastroCliente(){
     // Depois de Efetuar o Cadastro
     renderizarTexto(CAPA);
 
-    printf("\n  ### Cliente %.10s cadastrado com sucesso ####\n", "c.nome");
+    printf("\n  ### Cliente %s cadastrado com sucesso ####\n", "c.nome");
     printf("  ### Deseja realizar outro cadastro ? ###\n\n");
 
     renderizarTexto(MENU_CADASTROS_INTERNO);
@@ -545,7 +582,7 @@ void goCadastroFuncionario(){
     // Depois de Efetuar o Cadastro
     renderizarTexto(CAPA);
 
-    printf("\n  ### Funcionario %.10s cadastrado com sucesso ####\n", f.nome);
+    printf("\n  ### Funcionario %s cadastrado com sucesso ####\n", f.nome);
     printf("  ### Deseja realizar outro cadastro ? ###\n\n");
 
     renderizarTexto(MENU_CADASTROS_INTERNO);
@@ -644,13 +681,15 @@ void goCadastroFesta(){
     }else{
         f.codigoCliente = codigoCliente;
 
+        renderizarTexto(CAPA);
+        printf("\n  ### Cadastro de Festa ###\n\n");
         printf("\tDigite o Tema da festa: ");
         fgets(f.tema, 49, stdin);
         setbuf(stdin, NULL);
 
         formataString(f.tema);
 
-        while(selectData){ //DECIDIR a maldita DATA e o HORARIO da Tua FESTA
+        while(!selectData){ //DECIDIR a maldita DATA e o HORARIO da Tua FESTA
             char dataFesta[20];
             int params;
             int opcaoMarcada = -1;
@@ -676,11 +715,131 @@ void goCadastroFesta(){
         }
         f.horarioFim = f.horarioInicio+4;
         f.diaSemana = getDiaSemana(f.data);
-
+        int params;
         char convidados_txt[20];
-        printf("\tQuantos convidados?: ");
-        fgets(busca, 49, stdin);
+
+        system("clear");
+        renderizarTexto(CAPA);
+        printf("\n  ### Cadastro da Festa %s ###\n\n", f.tema);
+
+        printf("\tQuantos convidados ?\n\n");
+        printf("\t> 30\n");
+        printf("\t> 50\n");
+        printf("\t> 80\n");
+        printf("\t> 100\n\n");
+        printf("\tDigite a quantidade: ");
+
+        fgets(convidados_txt, 19, stdin);
         setbuf(stdin, NULL);
+        params = sscanf(convidados_txt, "%d", &f.convidados);
+
+        while ( ( (f.convidados != 30) && (f.convidados != 50)
+        && (f.convidados != 80) && (f.convidados != 100) ) || (params != 1)){
+            system("clear");
+            renderizarTexto(CAPA);
+            renderizarTexto(INVALIDO);
+            printf("\n  ### Cadastro da Festa %s ###\n\n", f.tema);
+
+            printf("\tQuantos convidados ?\n\n");
+            printf("\t> 30\n");
+            printf("\t> 50\n");
+            printf("\t> 80\n");
+            printf("\t> 100\n\n");
+            printf("\tDigite a quantidade: ");
+
+            fgets(convidados_txt, 19, stdin);
+            setbuf(stdin, NULL);
+            params = sscanf(convidados_txt, "%d", &f.convidados);
+        }
+        // Dados do Contrato
+        Cliente cliente = getCliente(f.codigoCliente);
+        Contrato c;
+        c.codigoFesta = getCodigoFesta();
+        c.status = A_PAGAR;
+
+        char pagamento_txt[20];
+        params = -1;
+
+        system("clear");
+        renderizarTexto(CAPA);
+        c.valorTotal = calcularValorTotal(f.convidados, diaSemanaContrato(f.diaSemana));
+
+        printf("\n  ### Cadastro da Festa %s ###\n\n", f.tema);
+        printf("  ### Valor total (sem desconto): R$ %.2f ###\n", c.valorTotal);
+        printf("  ### %s como deseja realizar o pagamento ? ###\n\n", cliente.nome);
+        printf("\t1-A vista - 10%% de desconto\n");
+        printf("\t2-Duas vezes - 5%% de desconto\n");
+        printf("\t3-Três vezes - 2%% de desconto\n");
+        printf("\t4-Quatro ou mais vezes - sem desconto\n\n");
+        printf("\tEscolha uma opção: ");
+
+        fgets(pagamento_txt, 19, stdin);
+        setbuf(stdin, NULL);
+        params = sscanf(pagamento_txt, "%d", &c.pagamento);
+
+        while ((c.pagamento < 1 || c.pagamento > 5) || params != 1) {
+            system("clear");
+            renderizarTexto(CAPA);
+            renderizarTexto(INVALIDO);
+            printf("\n  ### Cadastro da Festa %s ###\n\n", f.tema);
+            printf("  ### Valor total (sem desconto): R$ %.2f\n", c.valorTotal);
+            printf("  ### %s como deseja realizar o pagamento ? ###\n\n", cliente.nome);
+            printf("\t1-A vista - 10%% de desconto\n");
+            printf("\t2-Duas vezes - 5%% de desconto\n");
+            printf("\t3-Três vezes - 2%% de desconto\n");
+            printf("\t4-Quatro ou mais vezes - sem desconto\n\n");
+            printf("\tEscolha uma opção: ");
+
+            fgets(pagamento_txt, 19, stdin);
+            setbuf(stdin, NULL);
+            params = sscanf(pagamento_txt, "%d", &c.pagamento);
+        }
+        c.desconto = getDesconto(c.pagamento);
+        c.valorFinal = c.valorTotal - c.valorTotal*((float)c.desconto/100);
+
+        system("clear");
+
+        setContrato(&c);
+        setFesta(&f);
+
+        renderizarTexto(CAPA);
+        printf("\n  ### Não Esqueça de realizar o Pagamento :D ####\n", f.tema);
+        printf("\n  ### Festa %s cadastrada com sucesso ####\n", f.tema);
+        printf("  ### Deseja realizar outro cadastro ? ###\n\n");
+
+        renderizarTexto(MENU_CADASTROS_INTERNO);
+        params = -1;
+        int opcaoMarcada = -1;
+        char opcaoMarcada_txt[20];
+
+        fgets(opcaoMarcada_txt, 19, stdin);
+        setbuf(stdin, NULL);
+        params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+
+        while ((opcaoMarcada < 1 || opcaoMarcada > 3) || params != 1) {
+            system("clear");
+            renderizarTexto(CAPA);
+            renderizarTexto(INVALIDO);
+            printf("  ### Deseja realizar outro cadastro ? ###\n\n");
+            renderizarTexto(MENU_CADASTROS_INTERNO);
+
+            fgets(opcaoMarcada_txt, 19, stdin);
+            setbuf(stdin, NULL);
+            params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+        }
+
+        system("clear");
+        switch (opcaoMarcada) {
+            case 1:
+                goCadastroFesta();
+                break;
+            case 2:
+                goMenuCadastros();
+                break;
+            case 3:
+                goMenuPrincipal();
+
+        }
     }
 
 }
@@ -710,7 +869,7 @@ void goCadastroFornecedor(){
     // Depois de Efetuar o Cadastro
     renderizarTexto(CAPA);
 
-    printf("\n  ### Fornecedor %.10s cadastrado com sucesso ####\n", f.nome);
+    printf("\n  ### Fornecedor %s cadastrado com sucesso ####\n", f.nome);
     printf("  ### Deseja realizar outro cadastro ? ###\n\n");
 
     renderizarTexto(MENU_CADASTROS_INTERNO);
@@ -1097,6 +1256,126 @@ void goPesquisaFornecedor(){
     }
 
 }
+void goPesquisaFesta(){
+    char busca[50];
+    int codigo;
+
+    renderizarTexto(CAPA);
+    printf("\n  ### Pesquisa de Festas: ###\n\n");
+    printf("\tDigite o Tema da festa: ");
+
+    fgets(busca, 49, stdin);
+    setbuf(stdin, NULL);
+
+    codigo = getFestas(busca);
+
+    if (codigo == -1){
+        int params;
+        int opcaoMarcada = -1;
+        char opcaoMarcada_txt[20];
+
+        system("clear");
+        renderizarTexto(CAPA);
+        printf("\n  ### Pesquisa de Festas ###\n");
+        printf("  ### Deseja realizar outra Pesquisa ? ###\n\n");
+        renderizarTexto(MENU_PESQUISAS_INTERNO);
+
+        fgets(opcaoMarcada_txt, 19, stdin);
+        setbuf(stdin, NULL);
+        params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+
+        while ((opcaoMarcada < 1 || opcaoMarcada > 3) || params != 1) {
+            renderizarTexto(CAPA);
+            renderizarTexto(INVALIDO);
+            printf("\n  ### Pesquisa de Festas ###\n");
+            printf("  ### Deseja realizar outra Pesquisa ? ###\n\n");
+            renderizarTexto(MENU_PESQUISAS_INTERNO);
+
+            fgets(opcaoMarcada_txt, 19, stdin);
+            setbuf(stdin, NULL);
+            params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+        }
+
+        system("clear");
+        switch (opcaoMarcada) {
+            case 1:
+                goPesquisaFesta();
+                break;
+            case 2:
+                goMenuPesquisas();
+                break;
+            case 3:
+                goMenuPrincipal();
+                break;
+        }
+
+    }else{
+        Festa resultado;
+        FILE *bd;
+        bd = fopen(BD_FESTA, "r");
+
+        if(bd == NULL){
+            printf("Erro >>> Verifique se baixou o programa corretamente\n");
+            exit(EXIT_FAILURE);
+        }else{
+            fread(&resultado, sizeof(Festa), 1, bd);
+
+            while ( !feof(bd) && resultado.codigo != codigo) {
+                fread(&resultado, sizeof(Festa), 1, bd);
+            }
+            fclose(bd);
+
+            Cliente cliente = getCliente(resultado.codigoCliente);
+
+            renderizarTexto(CAPA);
+            printf("\n  ### Dados da Festa encontrado ###\n\n");
+            printf("\t> Codigo: %d\n", resultado.codigo);
+            printf("\t> Tema: %s\n", resultado.tema);
+            printf("\t> Data: %02d/%02d/%d\n\n", resultado.data.dia, resultado.data.mes, resultado.data.ano);
+            printf("\t> Inicio: %s\n", resultado.telefone);
+            printf("\t> Fim: %s\n", resultado.funcao);
+            printf("\t> Salario: %.2f\n", resultado.salario);
+            if ( resultado.tipo == TEMPORARIO ) printf("\t> Tipo: temporário\n");
+            if ( resultado.tipo == FIXO ) printf("\t> Tipo: fixo\n");
+
+            printf("  ### Deseja realizar outra Pesquisa ? ###\n\n");
+            renderizarTexto(MENU_PESQUISAS_INTERNO);
+
+            int params;
+            int opcaoMarcada = -1;
+            char opcaoMarcada_txt[20];
+            fgets(opcaoMarcada_txt, 19, stdin);
+            setbuf(stdin, NULL);
+            params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+
+            while ((opcaoMarcada < 1 || opcaoMarcada > 3) || params != 1) {
+                system("clear");
+                renderizarTexto(CAPA);
+                renderizarTexto(INVALIDO);
+                printf("  ### Deseja realizar outra Pesquisa ? ###\n\n");
+                renderizarTexto(MENU_PESQUISAS_INTERNO);
+
+                fgets(opcaoMarcada_txt, 19, stdin);
+                setbuf(stdin, NULL);
+                params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+            }
+
+            system("clear");
+            switch (opcaoMarcada) {
+                case 1:
+                    goPesquisaFesta();
+                    break;
+                case 2:
+                    goMenuPesquisas();
+                    break;
+                case 3:
+                    goMenuPrincipal();
+                    break;
+            }
+        }
+
+    }
+}
 
 void setCliente(Cliente *c){
     Cliente ultimo;
@@ -1189,7 +1468,77 @@ void setFornecedor(Fornecedor *f){
         fclose(bd);
     }
 }
+void setFesta(Festa *f){
+    Festa ultimo;
+    ultimo.codigoFesta = 0;
 
+    FILE *bd = fopen(BD_FESTA, "a+");
+    if (bd == NULL){
+        printf("Erro >>> Verifique se baixou o programa corretamente\n");
+        exit(EXIT_FAILURE);
+    }else{
+        //Pega o ultimo ID Cadastrado
+        fseek(bd, (-1)*sizeof(Festa), SEEK_END);
+        fread(&ultimo, sizeof(Festa), 1, bd);
+
+        // Escreve no Arquivo
+        f->codigoFesta = ultimo.codigoFesta+1;
+        fwrite(f, sizeof(Festa), 1, bd);
+
+        if (ferror(bd)){
+            fclose(bd);
+            printf("Erro >>> Não foi possivel escrever no arquivo\n");
+            exit(EXIT_FAILURE);
+        }
+
+        fclose(bd);
+    }
+}
+void setContrato(Contrato *c){
+    Contrato ultimo;
+    ultimo.numeroContrato = 0;
+
+    FILE *bd = fopen(BD_CONTRATO, "a+");
+    if (bd == NULL){
+        printf("Erro >>> Verifique se baixou o programa corretamente\n");
+        exit(EXIT_FAILURE);
+    }else{
+        //Pega o ultimo ID Cadastrado
+        fseek(bd, (-1)*sizeof(Contrato), SEEK_END);
+        fread(&ultimo, sizeof(Contrato), 1, bd);
+
+        // Escreve no Arquivo
+        c->numeroContrato = ultimo.numeroContrato+1;
+        fwrite(c, sizeof(Contrato), 1, bd);
+
+        if (ferror(bd)){
+            fclose(bd);
+            printf("Erro >>> Não foi possivel escrever no arquivo\n");
+            exit(EXIT_FAILURE);
+        }
+
+        fclose(bd);
+    }
+}
+
+Cliente getCliente(int codigo){
+    Cliente resultado;
+    FILE *bd;
+    bd = fopen(BD_CLIENTE, "r");
+
+    if(bd == NULL){
+        printf("Erro >>> Verifique se baixou o programa corretamente\n");
+        exit(EXIT_FAILURE);
+    }else{
+        fread(&resultado, sizeof(Cliente), 1, bd);
+
+        while ( !feof(bd) && resultado.codigo != codigo) {
+            fread(&resultado, sizeof(Cliente), 1, bd);
+        }
+        fclose(bd);
+    }
+    return resultado;
+}
 int getClientes(char busca[]){ //Retorna o codigo desejado
     formataString(busca);
 
@@ -1411,4 +1760,180 @@ int getFornecedores(char busca[]){ //Retorna o codigo desejado
     }
 
     return -1;
+}
+int getFestas(char busca[]){
+    formataString(busca);
+
+    Festa f;
+    int *codigos;
+    int numRegistros = 0;
+    codigos = (int*)malloc(1*sizeof(int));
+    // Parte para selecionar
+    int params;
+    int opcaoMarcada = 1;
+    char opcaoMarcada_txt[20];
+
+    FILE *bd;
+    bd = fopen(BD_FESTA, "r");
+
+    system("clear");
+    if (bd == NULL){
+        printf("Erro >>> Verifique se baixou o programa corretamente\n");
+        exit(EXIT_FAILURE);
+    }else{
+        renderizarTexto(CAPA);
+
+        fread(&f, sizeof(Festa), 1, bd); //Primeira Leitura dos DADOS
+
+        // Esta parte exibe a lista dos Dados Encontrados
+
+        if( !feof(bd) ){
+            printf("\n  ### Festas encontrados com a busca - %s ###\n\n", busca);
+            while ( !feof(bd) ) {
+                if (strstr(f.tema, busca) != NULL) {
+                    numRegistros++;
+
+                    printf("\t%d-%s - codigo: %d\n", numRegistros, f.tema, f.codigoFesta);
+
+                    codigos = (int*)realloc(codigos, numRegistros*sizeof(int));
+                    codigos[numRegistros-1] = f.codigo;
+
+                    fread(&f, sizeof(Festa), 1, bd);
+                }else{
+                    fread(&f, sizeof(Festa), 1, bd);
+                }
+            }
+            if (numRegistros == 0){
+                printf("  ### Nenhum ###\n");
+                printf("\t1-Voltar\n");
+            }else{
+                printf("\t%d-Voltar\n", numRegistros+1);
+            }
+
+            fclose(bd);
+
+            printf("\nEscolha uma das opções acima:\n");
+            fgets(opcaoMarcada_txt, 19, stdin);
+            setbuf(stdin, NULL);
+            params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+
+            system("clear");
+            if ( (numRegistros == 0) || (opcaoMarcada < 1 || opcaoMarcada > numRegistros) || params != 1) {
+                free(codigos);
+                return -1; // Realizar outra Pesquisa
+            }else{
+                int retorno = codigos[opcaoMarcada-1];
+                free(codigos);
+
+                return retorno;
+            }
+        }else{
+            return -1; // Nenhum registro encontrado
+        }
+
+    }
+
+    return -1;
+}
+int getFestasData(Data data){
+    // Festa f;
+    // int *codigos;
+    // int numRegistros = 0;
+    // codigos = (int*)malloc(1*sizeof(int));
+    // // Parte para selecionar
+    // int params;
+    // int opcaoMarcada = 1;
+    // char opcaoMarcada_txt[20];
+    //
+    // FILE *bd;
+    // bd = fopen(BD_FESTA, "r");
+    //
+    // system("clear");
+    // if (bd == NULL){
+    //     printf("Erro >>> Verifique se baixou o programa corretamente\n");
+    //     exit(EXIT_FAILURE);
+    // }else{
+    //     renderizarTexto(CAPA);
+    //
+    //     fread(&f, sizeof(Fornecedor), 1, bd); //Primeira Leitura dos DADOS
+    //
+    //     // Esta parte exibe a lista dos Dados Encontrados
+    //
+    //     if( !feof(bd) ){
+    //         printf("\n  ### Fornecedores encontrados com a busca - %s ###\n\n", busca);
+    //         while ( !feof(bd) ) {
+    //             if (strstr(f.nome, busca) != NULL) {
+    //                 numRegistros++;
+    //
+    //                 printf("\t%d-%s - codigo: %d\n", numRegistros, f.nome, f.codigo);
+    //
+    //                 codigos = (int*)realloc(codigos, numRegistros*sizeof(int));
+    //                 codigos[numRegistros-1] = f.codigo;
+    //
+    //                 fread(&f, sizeof(Fornecedor), 1, bd);
+    //             }else{
+    //                 fread(&f, sizeof(Fornecedor), 1, bd);
+    //             }
+    //         }
+    //         if (numRegistros == 0){
+    //             printf("  ### Nenhum ###\n");
+    //             printf("\t1-Voltar\n");
+    //         }else{
+    //             printf("\t%d-Voltar\n", numRegistros+1);
+    //         }
+    //
+    //         fclose(bd);
+    //
+    //         printf("\nEscolha uma das opções acima:\n");
+    //         fgets(opcaoMarcada_txt, 19, stdin);
+    //         setbuf(stdin, NULL);
+    //         params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+    //
+    //         system("clear");
+    //         if ( (numRegistros == 0) || (opcaoMarcada < 1 || opcaoMarcada > numRegistros) || params != 1) {
+    //             free(codigos);
+    //             return -1; // Realizar outra Pesquisa
+    //         }else{
+    //             int retorno = codigos[opcaoMarcada-1];
+    //             free(codigos);
+    //
+    //             return retorno;
+    //         }
+    //     }else{
+    //         return -1; // Nenhum registro encontrado
+    //     }
+    //
+    // }
+    //
+    // return -1;
+}
+int getFestasCodigoCliente(int codigoCliente){
+
+}
+int getCodigoFesta(){
+    Festa ultimo;
+    int retorno = -1;
+    ultimo.codigoFesta = 0;
+
+    FILE *bd = fopen(BD_FESTA, "a+");
+    if (bd == NULL){
+        printf("Erro >>> Verifique se baixou o programa corretamente\n");
+        exit(EXIT_FAILURE);
+    }else{
+        //Pega o ultimo ID Cadastrado
+        fseek(bd, (-1)*sizeof(Festa), SEEK_END);
+        fread(&ultimo, sizeof(Festa), 1, bd);
+
+        // Escreve no Arquivo
+        retorno = ultimo.codigoFesta+1;
+
+        if (ferror(bd)){
+            fclose(bd);
+            printf("Erro >>> Não foi possivel escrever no arquivo\n");
+            exit(EXIT_FAILURE);
+        }
+
+        fclose(bd);
+    }
+    return retorno;
 }

@@ -42,10 +42,13 @@ typedef struct FuncionarioTag Funcionario;
 typedef struct ContratoTag Contrato;
 
 void formataString(char texto[]);                   // Tira possiveis quebras de linha na String
-bool validarData(Data *data, char dataInformada[], int dataTipo);  // Verifica se a data existe
-int diaSemana(Data data);
-bool selectHorario(char tema[], Data data, int *horarioInicio);
 void renderizarTexto(char texto[]);                 //carrega TXT's
+bool selectHorario(char tema[], Data data, int *horarioInicio);
+bool validarData(Data *data, char dataInformada[], int dataTipo);  // Verifica se a data existe
+int getDiaSemana(Data data);
+int diaSemanaContrato(int dia);
+int getDesconto(int pagamento);
+float calcularValorTotal(int convidados, int dia);
 // Renders
 void goMenuPrincipal();
 void goMenuCadastros();
@@ -61,9 +64,13 @@ void goPesquisaFuncionario();
 // Funcoes BDS
 void setCliente(Cliente *c);
 void setFuncionario(Funcionario *f);
-void setFesta(Festa *f);
 void setFornecedor(Fornecedor *f);
+void setFesta(Festa *f);
+void setContrato(Contrato *c);
 
+Cliente getCliente(int codigo);
 int getClientes(char busca[]);
 int getFuncionarios(char busca[]);
+int getFornecedores(char busca[]);
+int getCodigoFesta();
 #endif
