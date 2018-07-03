@@ -1,0 +1,8 @@
+  ------------------------EDITAR STATUS CONTRATO----------------------------
+  ### Pesquisar Festa ###
+
+      1-Por Cliente
+      2-Por Data da Festa
+      3-Voltar para o Inicio
+
+Escolha uma opção: 

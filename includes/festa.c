@@ -451,15 +451,51 @@ void goMenuPesquisas(){
             goPesquisaCliente();
             break;
         case 2:
-            printf("goPesquisaCliente()\n");
+            goPesquisaFesta();
             break;
         case 3:
-            printf("goPesquisaCliente()\n");
+            goPesquisaFornecedor();
             break;
         case 4:
             goPesquisaFuncionario();
             break;
         case 5:
+            goMenuPrincipal();
+            break;
+    }
+}
+void goMenuStatus(){
+    int params;
+    int opcaoMarcada = -1;
+    char opcaoMarcada_txt[20];
+
+    renderizarTexto(CAPA);
+    renderizarTexto(MENU_STATUS);
+
+    fgets(opcaoMarcada_txt, 19, stdin);
+    setbuf(stdin, NULL);
+    params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+
+    while ((opcaoMarcada < 1 || opcaoMarcada > 5) || params != 1) {
+            system("clear");
+            renderizarTexto(CAPA);
+            renderizarTexto(INVALIDO);
+            renderizarTexto(MENU_STATUS);
+
+            fgets(opcaoMarcada_txt, 19, stdin);
+            setbuf(stdin, NULL);
+            params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+    }
+
+    system("clear");
+    switch (opcaoMarcada) {
+        case 1:
+            goStatusCliente();
+            break;
+        case 2:
+            goStatusData();
+            break;
+        case 3:
             goMenuPrincipal();
             break;
     }
@@ -983,8 +1019,14 @@ void goPesquisaCliente(){
             printf("\t> Endereco: %s\n", resultado.endereco);
             printf("\t> Telefone: %s\n", resultado.telefone);
             printf("\t> Data de Nascimento: %02d/%02d/%d\n\n", resultado.aniversario.dia, resultado.aniversario.mes, resultado.aniversario.ano);
+            printf("  Pressione <enter> ");
 
-            printf("  ### Deseja realizar outra Pesquisa ? ###\n\n");
+            fgetc(stdin);
+            setbuf(stdin, NULL);
+            system("clear");
+
+            renderizarTexto(CAPA);
+            printf("\n  ### Deseja realizar outra Pesquisa ? ###\n\n");
             renderizarTexto(MENU_PESQUISAS_INTERNO);
 
             int params;
@@ -1099,10 +1141,16 @@ void goPesquisaFuncionario(){
             printf("\t> Telefone: %s\n", resultado.telefone);
             printf("\t> Função: %s\n", resultado.funcao);
             printf("\t> Salario: %.2f\n", resultado.salario);
-            if ( resultado.tipo == TEMPORARIO ) printf("\t> Tipo: temporário\n");
-            if ( resultado.tipo == FIXO ) printf("\t> Tipo: fixo\n");
+            if ( resultado.tipo == TEMPORARIO ) printf("\t> Tipo: temporário\n\n");
+            if ( resultado.tipo == FIXO ) printf("\t> Tipo: fixo\n\n");
+            printf("  Pressione <enter> ");
 
-            printf("  ### Deseja realizar outra Pesquisa ? ###\n\n");
+            fgetc(stdin);
+            setbuf(stdin, NULL);
+            system("clear");
+
+            renderizarTexto(CAPA);
+            printf("\n  ### Deseja realizar outra Pesquisa ? ###\n\n");
             renderizarTexto(MENU_PESQUISAS_INTERNO);
 
             int params;
@@ -1215,8 +1263,14 @@ void goPesquisaFornecedor(){
             printf("\t> Codigo: %d\n", resultado.codigo);
             printf("\t> Nome: %s\n", resultado.nome);
             printf("\t> Telefone: %s\n", resultado.telefone);
-            printf("\t> Produto fornecido: %s\n", resultado.produtoFornecido);
+            printf("\t> Produto fornecido: %s\n\n", resultado.produtoFornecido);
+            printf("  Pressione <enter> ");
 
+            fgetc(stdin);
+            setbuf(stdin, NULL);
+            system("clear");
+
+            renderizarTexto(CAPA);
             printf("  ### Deseja realizar outra Pesquisa ? ###\n\n");
             renderizarTexto(MENU_PESQUISAS_INTERNO);
 
@@ -1320,7 +1374,7 @@ void goPesquisaFesta(){
         }else{
             fread(&resultado, sizeof(Festa), 1, bd);
 
-            while ( !feof(bd) && resultado.codigo != codigo) {
+            while ( !feof(bd) && resultado.codigoFesta != codigo) {
                 fread(&resultado, sizeof(Festa), 1, bd);
             }
             fclose(bd);
@@ -1329,16 +1383,23 @@ void goPesquisaFesta(){
 
             renderizarTexto(CAPA);
             printf("\n  ### Dados da Festa encontrado ###\n\n");
-            printf("\t> Codigo: %d\n", resultado.codigo);
+            printf("\t> Codigo: %d\n", resultado.codigoFesta);
             printf("\t> Tema: %s\n", resultado.tema);
             printf("\t> Data: %02d/%02d/%d\n\n", resultado.data.dia, resultado.data.mes, resultado.data.ano);
-            printf("\t> Inicio: %s\n", resultado.telefone);
-            printf("\t> Fim: %s\n", resultado.funcao);
-            printf("\t> Salario: %.2f\n", resultado.salario);
-            if ( resultado.tipo == TEMPORARIO ) printf("\t> Tipo: temporário\n");
-            if ( resultado.tipo == FIXO ) printf("\t> Tipo: fixo\n");
+            printf("\t> Inicio: %02d:00\n", resultado.horarioInicio);
+            printf("\t> Fim: %02d:00\n\n", resultado.horarioFim);
+            printf("  ### Realizador ###\n\n");
+            printf("\t> Codigo: %d\n", cliente.codigo);
+            printf("\t> Nome: %s\n", cliente.nome);
+            printf("\t> Telefone: %s\n\n", cliente.telefone);
+            printf("  Pressione <enter> ");
 
-            printf("  ### Deseja realizar outra Pesquisa ? ###\n\n");
+            fgetc(stdin);
+            setbuf(stdin, NULL);
+            system("clear");
+
+            renderizarTexto(CAPA);
+            printf("\n  ### Deseja realizar outra Pesquisa ? ###\n\n");
             renderizarTexto(MENU_PESQUISAS_INTERNO);
 
             int params;
@@ -1375,6 +1436,195 @@ void goPesquisaFesta(){
         }
 
     }
+}
+// Views de Status
+void goStatusCliente(){
+    char busca[50];
+    int codigoCliente;
+
+    renderizarTexto(CAPA);
+    printf("\n  ### Editar Status Contrato ###\n");
+    printf("\n  ### Pesquisa por Cliente ###\n\n");
+    printf("\tDigite um nome para a busca: ");
+
+    fgets(busca, 49, stdin);
+    setbuf(stdin, NULL);
+
+    codigoCliente = getClientes(busca);
+    // Verifica se a busca deu certo
+    if (codigoCliente == -1){
+        int params;
+        int opcaoMarcada = -1;
+        char opcaoMarcada_txt[20];
+
+        system("clear");
+        renderizarTexto(CAPA);
+        printf("\n  ### Editar Status Contrato ###\n");
+        printf("\n  ### Pesquisa por Cliente ###\n\n");
+        printf("  ### Deseja realizar outra Pesquisa ? ###\n\n");
+        renderizarTexto(MENU_STATUS_INTERNO);
+
+        fgets(opcaoMarcada_txt, 19, stdin);
+        setbuf(stdin, NULL);
+        params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+
+        while ((opcaoMarcada < 1 || opcaoMarcada > 3) || params != 1) {
+            renderizarTexto(CAPA);
+            renderizarTexto(INVALIDO);
+            printf("\n  ### Editar Status Contrato ###\n");
+            printf("\n  ### Pesquisa por Cliente ###\n\n");
+            printf("  ### Deseja realizar outra Pesquisa ? ###\n\n");
+            renderizarTexto(MENU_STATUS_INTERNO);
+
+            fgets(opcaoMarcada_txt, 19, stdin);
+            setbuf(stdin, NULL);
+            params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+        }
+
+        system("clear");
+        switch (opcaoMarcada) {
+            case 1:
+                goStatusCliente();
+                break;
+            case 2:
+                goMenuStatus();
+                break;
+            case 3:
+                goMenuPrincipal();
+                break;
+        }
+
+    }else{
+        //Procura se Cliente tem uma Festa
+        Cliente cliente = getCliente(codigoCliente);
+        int codigoFesta = getFestasCodigoCliente(codigoCliente, cliente.nome);
+
+        if (codigoFesta == -1){
+            int params;
+            int opcaoMarcada = -1;
+            char opcaoMarcada_txt[20];
+
+            system("clear");
+            renderizarTexto(CAPA);
+            printf("\n  ### Editar Status Contrato ###\n");
+            printf("\n  ### Cliente não possui Festa Associada ###\n\n");
+            printf("  ### Deseja realizar outra Pesquisa ? ###\n\n");
+            renderizarTexto(MENU_STATUS_INTERNO);
+
+            fgets(opcaoMarcada_txt, 19, stdin);
+            setbuf(stdin, NULL);
+            params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+
+            while ((opcaoMarcada < 1 || opcaoMarcada > 3) || params != 1) {
+                renderizarTexto(CAPA);
+                renderizarTexto(INVALIDO);
+                printf("\n  ### Editar Status Contrato ###\n");
+                printf("\n  ### Cliente não possui Festa Associada ###\n\n");
+                printf("  ### Deseja realizar outra Pesquisa ? ###\n\n");
+                renderizarTexto(MENU_STATUS_INTERNO);
+
+                fgets(opcaoMarcada_txt, 19, stdin);
+                setbuf(stdin, NULL);
+                params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+            }
+
+            system("clear");
+            switch (opcaoMarcada) {
+                case 1:
+                    goStatusCliente();
+                    break;
+                case 2:
+                    goMenuStatus();
+                    break;
+                case 3:
+                    goMenuPrincipal();
+                    break;
+            }
+
+        }else{
+            // Carrega dados da Festa e Cliente
+            Festa resultado;
+            FILE *bd;
+            bd = fopen(BD_FESTA, "r");
+
+            if(bd == NULL){
+                printf("Erro >>> Verifique se baixou o programa corretamente\n");
+                exit(EXIT_FAILURE);
+            }else{
+                fread(&resultado, sizeof(Festa), 1, bd);
+
+                while ( !feof(bd) && resultado.codigoFesta != codigoFesta) {
+                    fread(&resultado, sizeof(Festa), 1, bd);
+                }
+                fclose(bd);
+
+                renderizarTexto(CAPA);
+                printf("\n  ### Dados da Festa encontrado ###\n\n");
+                printf("\t> Codigo: %d\n", resultado.codigoFesta);
+                printf("\t> Tema: %s\n", resultado.tema);
+                printf("\t> Data: %02d/%02d/%d\n\n", resultado.data.dia, resultado.data.mes, resultado.data.ano);
+                printf("\t> Inicio: %02d:00\n", resultado.horarioInicio);
+                printf("\t> Fim: %02d:00\n\n", resultado.horarioFim);
+                printf("  ### Realizador ###\n\n");
+                printf("\t> Codigo: %d\n", cliente.codigo);
+                printf("\t> Nome: %s\n", cliente.nome);
+                printf("\t> Telefone: %s\n\n", cliente.telefone);
+                printf("  Pressione <enter> ");
+
+                fgetc(stdin);
+                setbuf(stdin, NULL);
+                system("clear");
+
+                // Pergunta se Deseja alterar o Status
+
+                renderizarTexto(CAPA);
+                printf("\n  ### Editar Status Contrato ###\n");
+                printf("\n  ### Alterar Status da Festa para: ###\n\n");
+                renderizarTexto(MENU_STATUS_ALTERAR);
+
+                int params;
+                int opcaoMarcada = -1;
+                char opcaoMarcada_txt[20];
+                fgets(opcaoMarcada_txt, 19, stdin);
+                setbuf(stdin, NULL);
+                params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+
+                while ((opcaoMarcada < 1 || opcaoMarcada > 3) || params != 1) {
+                    system("clear");
+                    renderizarTexto(CAPA);
+                    renderizarTexto(INVALIDO);
+                    printf("\n  ### Editar Status Contrato ###\n");
+                    printf("\n  ### Alterar Status da Festa para: ###\n\n");
+                    renderizarTexto(MENU_STATUS_ALTERAR);
+
+                    fgets(opcaoMarcada_txt, 19, stdin);
+                    setbuf(stdin, NULL);
+                    params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+                }
+
+                system("clear");
+                switch (opcaoMarcada) {
+                    case 1:
+                        setContratoStatus(PAGO, resultado.codigoFesta);
+                        break;
+                    case 2:
+                        setContratoStatus(CANCELADO, resultado.codigoFesta);
+                        break;
+                    case 3:
+                        goMenuStatus();
+                        break;
+                    case 4:
+                        goMenuPrincipal();
+                        break;
+                }
+            }
+        }
+    }
+
+
+}
+void goStatusData(){
+//Fazer
 }
 
 void setCliente(Cliente *c){
@@ -1510,6 +1760,29 @@ void setContrato(Contrato *c){
         // Escreve no Arquivo
         c->numeroContrato = ultimo.numeroContrato+1;
         fwrite(c, sizeof(Contrato), 1, bd);
+
+        if (ferror(bd)){
+            fclose(bd);
+            printf("Erro >>> Não foi possivel escrever no arquivo\n");
+            exit(EXIT_FAILURE);
+        }
+
+        fclose(bd);
+    }
+}
+void setContratoStatus(int pagamento, int codigoFesta){
+    FILE *bd = fopen(BD_CONTRATO, "r");
+    if (bd == NULL){
+        printf("Erro >>> Verifique se baixou o programa corretamente\n");
+        exit(EXIT_FAILURE);
+    }else{
+        //Pega o ultimo ID Cadastrado
+        fseek(bd, (-1)*sizeof(Cliente), SEEK_END);
+        fread(&ultimo, sizeof(Cliente), 1, bd);
+
+        // Escreve no Arquivo
+        c->codigo = ultimo.codigo+1;
+        fwrite(c, sizeof(Cliente), 1, bd);
 
         if (ferror(bd)){
             fclose(bd);
@@ -1796,7 +2069,7 @@ int getFestas(char busca[]){
                     printf("\t%d-%s - codigo: %d\n", numRegistros, f.tema, f.codigoFesta);
 
                     codigos = (int*)realloc(codigos, numRegistros*sizeof(int));
-                    codigos[numRegistros-1] = f.codigo;
+                    codigos[numRegistros-1] = f.codigoFesta;
 
                     fread(&f, sizeof(Festa), 1, bd);
                 }else{
@@ -1907,8 +2180,77 @@ int getFestasData(Data data){
     //
     // return -1;
 }
-int getFestasCodigoCliente(int codigoCliente){
+int getFestasCodigoCliente(int codigoCliente, char nomeCliente[]){
+    Festa f;
+    int *codigos;
+    int numRegistros = 0;
+    codigos = (int*)malloc(1*sizeof(int));
+    // Parte para selecionar
+    int params;
+    int opcaoMarcada = 1;
+    char opcaoMarcada_txt[20];
 
+    FILE *bd;
+    bd = fopen(BD_FESTA, "r");
+
+    system("clear");
+    if (bd == NULL){
+        printf("Erro >>> Verifique se baixou o programa corretamente\n");
+        exit(EXIT_FAILURE);
+    }else{
+        renderizarTexto(CAPA);
+
+        fread(&f, sizeof(Festa), 1, bd); //Primeira Leitura dos DADOS
+
+        // Esta parte exibe a lista dos Dados Encontrados
+
+        if( !feof(bd) ){
+            printf("\n  ### Festas do Cliente - %s ###\n\n", nomeCliente);
+            while ( !feof(bd) ) {
+                if (codigoCliente == f.codigoCliente) {
+                    numRegistros++;
+
+                    printf("\t%d-%s - codigo: %d\n", numRegistros, f.tema, f.codigoFesta);
+
+                    codigos = (int*)realloc(codigos, numRegistros*sizeof(int));
+                    codigos[numRegistros-1] = f.codigoFesta;
+
+                    fread(&f, sizeof(Festa), 1, bd);
+                }else{
+                    fread(&f, sizeof(Festa), 1, bd);
+                }
+            }
+            if (numRegistros == 0){
+                printf("  ### Nenhuma ###\n");
+                printf("\t1-Voltar\n");
+            }else{
+                printf("\t%d-Voltar\n", numRegistros+1);
+            }
+
+            fclose(bd);
+
+            printf("\nEscolha uma das opções acima:\n");
+            fgets(opcaoMarcada_txt, 19, stdin);
+            setbuf(stdin, NULL);
+            params = sscanf(opcaoMarcada_txt, "%d", &opcaoMarcada);
+
+            system("clear");
+            if ( (numRegistros == 0) || (opcaoMarcada < 1 || opcaoMarcada > numRegistros) || params != 1) {
+                free(codigos);
+                return -1; // Realizar outra Pesquisa
+            }else{
+                int retorno = codigos[opcaoMarcada-1];
+                free(codigos);
+
+                return retorno;
+            }
+        }else{
+            return -1; // Nenhum registro encontrado
+        }
+
+    }
+
+    return -1;
 }
 int getCodigoFesta(){
     Festa ultimo;

@@ -15,6 +15,9 @@
 #define MENU_PRINCIPAL "assets/menus/menuPrincipal.txt"
 #define MENU_CADASTROS "assets/menus/menuCadastros.txt"
 #define MENU_PESQUISAS "assets/menus/menuPesquisas.txt"
+#define MENU_STATUS "assets/menus/menuStatus.txt"
+#define MENU_STATUS_INTERNO "assets/menus/menuStatusInterno.txt"
+#define MENU_STATUS_ALTERAR "assets/menus/menuStatusAlterar.txt"
 #define MENU_CADASTROS_INTERNO "assets/menus/menuCadastrosInterno.txt"
 #define MENU_PESQUISAS_INTERNO "assets/menus/menuPesquisasInterno.txt"
 //DEFINES DOS BDS
@@ -53,6 +56,7 @@ float calcularValorTotal(int convidados, int dia);
 void goMenuPrincipal();
 void goMenuCadastros();
 void goMenuPesquisas();
+void goMenuStatus();
 // Cadastros
 void goCadastroCliente();
 void goCadastroFuncionario();
@@ -60,17 +64,27 @@ void goCadastroFesta();
 void goCadastroFornecedor();
 // Pesquisas
 void goPesquisaCliente();
+void goPesquisaFesta();
+void goPesquisaFornecedor();
 void goPesquisaFuncionario();
+// Status
+void goStatusCliente();
+void goStatusData();
 // Funcoes BDS
 void setCliente(Cliente *c);
 void setFuncionario(Funcionario *f);
 void setFornecedor(Fornecedor *f);
 void setFesta(Festa *f);
 void setContrato(Contrato *c);
+void setContratoStatus(int pagamento, int codigoFesta);
 
 Cliente getCliente(int codigo);
 int getClientes(char busca[]);
 int getFuncionarios(char busca[]);
 int getFornecedores(char busca[]);
+int getFestas(char busca[]);
+int getFestasData(Data data);
+int getFestasCodigoCliente(int codigoCliente, char nomeCliente[]);
 int getCodigoFesta();
+
 #endif

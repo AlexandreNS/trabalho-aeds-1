@@ -43,20 +43,7 @@ switch (opcaoMarcada) {
 
 int main() {
     system("clear");
-    Contrato c;
-    FILE *bd;
-    bd = fopen(BD_CONTRATO, "r");
-
-    fread(&c, sizeof(Contrato), 1, bd);
-    while (!feof(bd)) {
-        printf("%f\n", c.valorFinal);
-        printf("%d\n", c.codigoFesta);
-        printf("%d\n", c.numeroContrato);
-        printf("\n\n");
-        fread(&c, sizeof(Contrato), 1, bd);
-    }
-
-    fclose(bd);
+    printf("%d\n", getFestasCodigoCliente(getClientes("P"),"Alexandre Noronha da Silva"));
 
     // Festa f;
     // f.codigoFesta = getCodigoFesta();

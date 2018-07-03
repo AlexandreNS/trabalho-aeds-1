@@ -1,0 +1,6 @@
+        1-Pagar
+        2-Cancelar
+        3-Alterar de Outra Festa
+        4-Voltar para o Inicio
+
+Escolha uma opção:
