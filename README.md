@@ -2,11 +2,11 @@
 
 # Trabalho de AEDS-1
 
-+Para executar o programa execute `./SalaoDeFestas` na pasta do projeto
++ Para executar o programa execute `./SalaoDeFestas` na pasta do projeto
 
-+Para compilar o programa execute na pasta do projeto:
++ Para compilar o programa execute na pasta do projeto:
 ```Bash
 gcc main.c -o SalaoDeFestas
 ./SalaoDeFestas
 ```
-+Projeto executado e testado no Deepin 15.6 Desktop
++ Projeto executado e testado no Deepin 15.6 Desktop
