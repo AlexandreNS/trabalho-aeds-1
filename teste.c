@@ -1,4 +1,5 @@
 #include "includes/festa.c"
+
 /*
 int params;
 int opcaoMarcada = -1;
@@ -43,7 +44,18 @@ switch (opcaoMarcada) {
 
 int main() {
     system("clear");
-    printf("%d\n", getFestasCodigoCliente(getClientes("P"),"Alexandre Noronha da Silva"));
+    // printf("%d\n", getFestasCodigoCliente(getClientes("P"),"Alexandre Noronha da Silva"));
+    Data data;
+    data.dia = 4;
+    data.mes = 9;
+    data.ano = 2018;
+
+    printf("%d\n", getFestasData(data));
+    // char dias[7][10] = {"Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"};
+    //
+    // for (int i = 0; i < 7; i++) {
+    //     printf("%s\n", dias[i]);
+    // }
 
     // Festa f;
     // f.codigoFesta = getCodigoFesta();

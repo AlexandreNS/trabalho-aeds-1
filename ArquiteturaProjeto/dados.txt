@@ -9,5 +9,7 @@ FESTA = código festa, quantidade de convidados, data, dia da semana, horário (
 CONTRATO = número contrato, valor total, desconto, valor final, forma de pagamento, status, código festa
 
 
-int codigoFesta;
-int convidados;
+número contrato
+desconto
+forma de pagamento
+valor final

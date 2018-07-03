@@ -12,14 +12,17 @@
 //TEXTO PARA IMPRIMIR NA TELA
 #define INVALIDO "assets/invalido.txt"
 #define CAPA "assets/artes/headerPrincipal.txt"
+#define ARTE_SAIR "assets/artes/arteSair.txt"
 #define MENU_PRINCIPAL "assets/menus/menuPrincipal.txt"
 #define MENU_CADASTROS "assets/menus/menuCadastros.txt"
 #define MENU_PESQUISAS "assets/menus/menuPesquisas.txt"
 #define MENU_STATUS "assets/menus/menuStatus.txt"
+#define MENU_RELATORIOS "assets/menus/menuRelatorios.txt"
 #define MENU_STATUS_INTERNO "assets/menus/menuStatusInterno.txt"
 #define MENU_STATUS_ALTERAR "assets/menus/menuStatusAlterar.txt"
 #define MENU_CADASTROS_INTERNO "assets/menus/menuCadastrosInterno.txt"
 #define MENU_PESQUISAS_INTERNO "assets/menus/menuPesquisasInterno.txt"
+#define MENU_RELATORIOS_INTERNO "assets/menus/menuRelatoriosInterno.txt"
 //DEFINES DOS BDS
 #define BD_CLIENTE "db/cliente.dat"
 #define BD_FUNCIONARIO "db/funcionario.dat"
@@ -57,6 +60,7 @@ void goMenuPrincipal();
 void goMenuCadastros();
 void goMenuPesquisas();
 void goMenuStatus();
+void goMenuRelatorios();
 // Cadastros
 void goCadastroCliente();
 void goCadastroFuncionario();
@@ -70,6 +74,9 @@ void goPesquisaFuncionario();
 // Status
 void goStatusCliente();
 void goStatusData();
+//Relatorios
+void goRelatoriosFesta();
+void goRelatoriosCliente();
 // Funcoes BDS
 void setCliente(Cliente *c);
 void setFuncionario(Funcionario *f);
@@ -78,6 +85,7 @@ void setFesta(Festa *f);
 void setContrato(Contrato *c);
 void setContratoStatus(int pagamento, int codigoFesta);
 
+Contrato getContrato(int codigoFesta);
 Cliente getCliente(int codigo);
 int getClientes(char busca[]);
 int getFuncionarios(char busca[]);
@@ -86,5 +94,7 @@ int getFestas(char busca[]);
 int getFestasData(Data data);
 int getFestasCodigoCliente(int codigoCliente, char nomeCliente[]);
 int getCodigoFesta();
+
+void removeFesta(int codigoFesta);
 
 #endif

@@ -1,0 +1,8 @@
+  --------------------------------RELATORIOS--------------------------------
+  ### Exibir Relatorio de ###
+
+        1-Festas de um Cliente
+        2-Detalhes de uma Festa
+        3-Voltar para o Inicio
+
+Escolha uma opção:
